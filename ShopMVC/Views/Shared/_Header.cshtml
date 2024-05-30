@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<div class="navbar-custom">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a href="/" class="navbar-brand"><h1 class="text-secondary mb-0">ShopMVC</h1></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ms-auto">
+                    @if (!Context.User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a href="/Customer/LogIn" class="nav-link">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Customer/Register" class="nav-link">Register</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a href="/" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Product/Index" class="nav-link">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Customer/LogOut" class="nav-link">Logout</a>
+                        </li>
+                    }
+                </ul>
+                <div class="d-flex align-items-center">
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        @await Component.InvokeAsync("Cart")
+                    }
+                    <a href="@(Context.User.Identity.IsAuthenticated ? "/Customer/Profile" : "/Customer/LogIn")" class="nav-link">
+                        <i class="fas fa-user fa-2x text-light"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>

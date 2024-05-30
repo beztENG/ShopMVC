@@ -1,0 +1,73 @@
+﻿@model ShopMVC.ViewModels.ProductDetailVM
+@{
+    ViewData["Title"] = "Detail";
+}
+
+    <div class="container">
+        <h1 class="text-center display-4">Product detail</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center bg-transparent mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-black">Home</a></li>
+                <li class="breadcrumb-item"><a href="/Product" class="text-black">Shop</a></li>
+                <li class="breadcrumb-item active text-black" aria-current="page">@Model.TenHh</li>
+            </ol>
+        </nav>
+    </div>
+
+
+
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow">
+                        <img src="~/Hinh/HangHoa/@Model.Hinh" class="card-img-top img-fluid rounded" alt="@Model.TenHh">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-3">@Model.TenHh</h2>
+                    <p class="mb-3">@Model.TenLoai</p>
+                    <h4 class="fw-bold mb-3">@Model.DonGia</h4>
+                    <p class="mb-4">@Model.MoTaNgan</p>
+                    <form asp-action="AddToCart" asp-controller="Cart" asp-route-id="@Model.MaHh" method="post">
+                        <div class="input-group quantity mb-4" style="max-width: 150px;">
+                            <button class="btn btn-minus border-0 rounded-circle" type="button" onclick="decreaseQuantity()">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input id="quantityInput" type="text" class="form-control text-center border-0" value="1" name="quantity">
+                            <button class="btn btn-plus border-0 rounded-circle" type="button" onclick="increaseQuantity()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 mb-4"><i class="fas fa-shopping-bag me-2"></i> Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="row g-4">
+                <div class="col-lg-12">
+                    @await Html.PartialAsync("_SearchPanel")
+                    @await Component.InvokeAsync("MenuType")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function increaseQuantity() {
+        var quantityInput = document.getElementById("quantityInput");
+        var currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+    }
+
+    function decreaseQuantity() {
+        var quantityInput = document.getElementById("quantityInput");
+        var currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    }
+</script>

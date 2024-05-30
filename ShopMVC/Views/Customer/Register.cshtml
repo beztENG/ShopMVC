@@ -1,0 +1,85 @@
+﻿@model ShopMVC.ViewModels.RegisterVM
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container-fluid py-5 bg-light">
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Register</h1>
+        <form asp-action="Register" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-item mb-3">
+                        <label asp-for="MaKh" class="form-label"></label><sup>*</sup>
+                        <input asp-for="MaKh" class="form-control">
+                        <span asp-validation-for="MaKh" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-item mb-3">
+                        <label asp-for="MatKhau" class="form-label"></label><sup>*</sup>
+                        <input asp-for="MatKhau" type="password" class="form-control">
+                        <span asp-validation-for="MatKhau" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-item mb-3">
+                        <label asp-for="HoTen" class="form-label"></label><sup>*</sup>
+                        <input asp-for="HoTen" class="form-control" />
+                        <span asp-validation-for="HoTen" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-check mb-3">
+                        <input asp-for="GioiTinh" class="form-check-input">
+                        <label class="form-check-label" for="GioiTinh">Male?</label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-item mb-3">
+                        <label asp-for="NgaySinh" class="form-label"></label>
+                        <input asp-for="NgaySinh" class="form-control" />
+                        <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-item mb-3">
+                        <label asp-for="DiaChi" class="form-label"></label>
+                        <input asp-for="DiaChi" class="form-control" />
+                        <span asp-validation-for="DiaChi" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-item mb-3">
+                        <label asp-for="DienThoai" class="form-label"></label>
+                        <input asp-for="DienThoai" class="form-control" />
+                        <span asp-validation-for="DienThoai" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-item mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-item mb-3">
+                        <label asp-for="Hinh" class="form-label">Picture</label>
+                        <input type="file" name="Hinh" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary text-uppercase">Register</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

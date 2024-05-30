@@ -1,0 +1,70 @@
+﻿@using ShopMVC.Helpers
+@model PaginatedList<ShopMVC.ViewModels.ProductVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_ListProduct";
+}
+
+<!-- Single Page Header start -->
+@section BreadCum {
+    <div class="container">
+        <h1 class="text-center display-4">Shop</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center bg-transparent mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-black">Home</a></li>
+                <li class="breadcrumb-item"><a href="/Product" class="text-black">Shop</a></li>
+            </ol>
+        </nav>
+    </div>
+}
+<!-- Single Page Header End -->
+@if (Context.User.Identity.IsAuthenticated)
+{
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="row g-4 justify-content-center">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-md-6 col-lg-6 col-xl-4">
+                            <div class="card border-0 shadow rounded position-relative fruite-item">
+                                <div class="fruite-img">
+                                    <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.MaHh">
+                                        <img src="~/Hinh/HangHoa/@item.Hinh" class="card-img-top img-fluid w-100 rounded-top" alt="@item.TenHh">
+                                    </a>
+                                </div>
+                                <div class="text-white bg-secondary px-3 py-1 rounded-top position-absolute" style="top: 10px; left: 10px;">@item.TenLoai</div>
+                                <div class="card-body p-4 border border-secondary border-top-0 rounded-bottom">
+                                    <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.MaHh">
+                                        <h4 class="card-title">@item.TenHh</h4>
+                                    </a>
+                                    <p class="card-text">@item.MoTaNgan</p>
+                                    <div class="d-flex justify-content-between flex-lg-wrap">
+                                        <p class="text-dark fs-5 fw-bold mb-0">$@item.DonGia</p>
+                                        <a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn btn-primary border border-secondary rounded-pill px-3 text-white">
+                                            <i class="fa fa-shopping-bag me-2"></i> Add to Cart
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @await Html.PartialAsync("_Pagination", Model)
+                
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <p>You need to Log In to see our products.</p>
+                <a href="/Customer/LogIn" class="btn btn-primary">Log In</a>
+            </div>
+        </div>
+    </div>
+}

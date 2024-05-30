@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<ShopMVC.ViewModels.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+
+}
+
+
+<!-- Cart Page Start -->
+@if (Context.User.Identity.IsAuthenticated)
+{
+    <div class="container py-5">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th class="align-middle text-center">Name</th>
+                        <th class="align-middle text-center">Price</th>
+                        <th class="align-middle text-center">Quantity</th>
+                        <th class="align-middle text-center">Total</th>
+                        <th class="align-middle text-center">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="~/Hinh/HangHoa/@item.Hinh" class="img-fluid rounded-circle" style="width: 80px; height: 80px;" alt="@item.TenHh">
+                            </td>
+                            <td class="align-middle text-center">@item.TenHh</td>
+                            <td class="align-middle text-center">$@item.DonGia</td>
+                            <td class="align-middle text-center">@item.SoLuong</td>
+                            <td class="align-middle text-center">$@item.ThanhTien</td>
+                            <td class="align-middle text-center">
+                                <a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row justify-content-end mt-5">
+            <div class="col-lg-4">
+                <div class="bg-light rounded p-4">
+                    <h2 class="mb-4">Receipt</h2>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Provisional:</span>
+                        <span>$@Model.Sum(p => p.DonGia)</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Transport fee:</span>
+                        <span>$@Model.Sum(p => p.PhiVanChuyen)</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h4>Total:</h4>
+                        <h4>$@Model.Sum(p => p.ThanhTien)</h4>
+                    </div>
+                    <div class="mt-4 text-end">
+                        <button class="btn btn-primary rounded-pill">Proceed to payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <p>You need to Log In to see the cart..</p>
+                <a href="/Customer/LogIn" class="btn btn-primary">Log In</a>
+            </div>
+        </div>
+    </div>
+}
+<!-- Cart Page End -->

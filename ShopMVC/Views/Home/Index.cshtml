@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container-fluid bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-3">Welcome to ShopMVC</h1>
+                @if (Context.User.Identity.IsAuthenticated)
+                {
+                    <p class="lead">Explore our collection of products and start shopping today!</p>
+                }
+                else
+                {
+                    <p class="lead">Please login to explore our collection of products and start shopping today!</p>
+                    <a href="/Customer/LogIn" class="btn btn-light btn-lg">Login</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="display-4">Discover Our Latest Products</h2>
+            <p class="lead">Explore a wide range of products that suit your needs.</p>
+            @if (Context.User.Identity.IsAuthenticated)
+            {
+                <a href="/Product/Index" class="btn btn-primary btn-lg">View Products</a>
+            }
+            else
+            {
+                <a href="/Customer/LogIn" class="btn btn-primary btn-lg">Login to view products</a>
+            }
+        </div>
+    </div>
+</div>
