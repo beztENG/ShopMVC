@@ -39,13 +39,10 @@ namespace ShopMVC.Controllers
                     khachHang.HieuLuc = true;
                     khachHang.VaiTro = 0;
 
-                    // Generate a random salt key
                     string saltKey = Guid.NewGuid().ToString();
 
-                    // Hash the password using SHA-256 or SHA-512
-                    khachHang.MatKhau = model.MatKhau.ToSHA256Hash(saltKey); // or ToSHA512Hash
+                    khachHang.MatKhau = model.MatKhau.ToSHA256Hash(saltKey);
 
-                    // Store the salt key in the database
                     khachHang.RandomKey = saltKey;
 
                     if (Hinh != null && Hinh.Length > 0)
@@ -94,10 +91,8 @@ namespace ShopMVC.Controllers
                     }
                     else
                     {
-                        // Retrieve the salt key from the database
                         string saltKey = khachHang.RandomKey;
 
-                        // Hash the entered password using the salt key
                         string hashedPassword = model.Password.ToSHA256Hash(saltKey); // or ToSHA512Hash
 
                         if (khachHang.MatKhau != hashedPassword)
@@ -106,7 +101,6 @@ namespace ShopMVC.Controllers
                         }
                         else
                         {
-                            // Xác thực thành công, tạo Claims và thực hiện đăng nhập
                             var claims = new List<Claim>
 
 
