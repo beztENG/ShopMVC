@@ -29,7 +29,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 //https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-8.0
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
-    options.LoginPath = "/KhachHang/DangNhap";
+    options.LoginPath = "/Customer/LogIn";
     options.AccessDeniedPath = "/AccessDenied";
 });
 
