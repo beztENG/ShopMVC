@@ -12,9 +12,9 @@ namespace ShopMVC.ViewComponents
 				(MySetting.CART_KEY) ?? new List<CartItem> ();
 			return View("CartPanel",new CartModel
 			{
-				Quantity = cart.Sum(p => p.SoLuong),
-				Total = cart.Sum(p => p.ThanhTien),
-			});
+                Quantity = cart.Sum(p => p.Quantity),
+                Total = (double)cart.Sum(p => p.TotalPrice)
+            });
 		}
 	}
 }

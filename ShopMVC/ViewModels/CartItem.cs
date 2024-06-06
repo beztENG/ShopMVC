@@ -2,13 +2,14 @@
 {
     public class CartItem
     {
-        public int MaHh { get; set; }
-        public string Hinh { get; set;}
-        public string TenHh { get; set;}
-        public double DonGia { get; set;}
-        public double PhiVanChuyen { get; set; }
-        public int SoLuong { get; set;}
-        public double ThanhTien => SoLuong * DonGia + PhiVanChuyen;
+        public int ProductID { get; set; }
+        public string? ImageFileName { get; set; } // Made nullable as images might not always be available
+        public string ProductName { get; set; } = null!;
+        public decimal UnitPrice { get; set; }  // Use decimal for currency accuracy
+        public decimal ShippingFee { get; set; } // Use decimal for currency accuracy
 
+        public int Quantity { get; set; }
+
+        public decimal TotalPrice => Quantity * UnitPrice + ShippingFee; // Calculate total price with decimals
     }
 }

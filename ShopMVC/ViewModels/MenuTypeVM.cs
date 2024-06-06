@@ -1,9 +1,9 @@
 ﻿namespace ShopMVC.ViewModels
 {
-    public class MenuTypeVM
+    public class MenuTypeVM // More descriptive name
     {
-        public int MaLoai { get; set; }
-        public string TenLoai { get; set; }
-        public int SoLuong { get; set; }
+        public int CategoryID { get; set; }
+        public string CategoryName { get; set; } = null!;
+        public int ProductCount { get; set; } // Renamed for clarity
     }
 }

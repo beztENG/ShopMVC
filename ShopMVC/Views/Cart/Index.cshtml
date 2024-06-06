@@ -1,15 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Http
 @model IEnumerable<ShopMVC.ViewModels.CartItem>
-@{
-    ViewData["Title"] = "Giỏ hàng";
 
+@{
+    ViewData["Title"] = "Shopping Cart";
 }
 
 
-<!-- Cart Page Start -->
-@if (Context.User.Identity.IsAuthenticated)
+@if (Context.User.Identity?.IsAuthenticated == true)
 {
     <div class="container py-5">
+        <h1 class="mb-4 text-center">Shopping Cart</h1>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -18,6 +18,7 @@
                         <th class="align-middle text-center">Name</th>
                         <th class="align-middle text-center">Price</th>
                         <th class="align-middle text-center">Quantity</th>
+                        <th class="align-middle text-center">Shipping Fee</th>
                         <th class="align-middle text-center">Total</th>
                         <th class="align-middle text-center">Remove</th>
                     </tr>
@@ -27,14 +28,15 @@
                     {
                         <tr>
                             <td>
-                                <img src="~/Hinh/HangHoa/@item.Hinh" class="img-fluid rounded-circle" style="width: 80px; height: 80px;" alt="@item.TenHh">
+                                <img src="~/Image/Product/@item.ImageFileName" class="img-fluid rounded-circle" style="width: 80px; height: 80px;" alt="@item.ProductName">
                             </td>
-                            <td class="align-middle text-center">@item.TenHh</td>
-                            <td class="align-middle text-center">$@item.DonGia</td>
-                            <td class="align-middle text-center">@item.SoLuong</td>
-                            <td class="align-middle text-center">$@item.ThanhTien</td>
+                            <td class="align-middle text-center">@item.ProductName</td>
+                            <td class="align-middle text-center">$@item.UnitPrice.ToString("0.00")</td>
+                            <td class="align-middle text-center">@item.Quantity</td>
+                            <td class="align-middle text-center">$@item.ShippingFee.ToString("0.00")</td>
+                            <td class="align-middle text-center">$@item.TotalPrice.ToString("0.00")</td>
                             <td class="align-middle text-center">
-                                <a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn btn-danger btn-sm">
+                                <a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.ProductID" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash-alt"></i>
                                 </a>
                             </td>
@@ -43,25 +45,26 @@
                 </tbody>
             </table>
         </div>
+
         <div class="row justify-content-end mt-5">
             <div class="col-lg-4">
                 <div class="bg-light rounded p-4">
-                    <h2 class="mb-4">Receipt</h2>
+                    <h2 class="mb-4">Order Summary</h2>
                     <div class="d-flex justify-content-between mb-3">
-                        <span>Provisional:</span>
-                        <span>$@Model.Sum(p => p.DonGia)</span>
+                        <span>Subtotal:</span>
+                        <span>$@Model.Sum(p => p.UnitPrice * p.Quantity).ToString("0.00")</span>
                     </div>
                     <div class="d-flex justify-content-between mb-3">
-                        <span>Transport fee:</span>
-                        <span>$@Model.Sum(p => p.PhiVanChuyen)</span>
+                        <span>Shipping:</span>
+                        <span>$@Model.Sum(p => p.ShippingFee).ToString("0.00")</span>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between">
                         <h4>Total:</h4>
-                        <h4>$@Model.Sum(p => p.ThanhTien)</h4>
+                        <h4>$@Model.Sum(p => p.TotalPrice).ToString("0.00")</h4>
                     </div>
                     <div class="mt-4 text-end">
-                        <button class="btn btn-primary rounded-pill">Proceed to payment</button>
+                        <a asp-action="Checkout" asp-controller="Cart" class="btn btn-primary rounded-pill">Proceed to Checkout</a>
                     </div>
                 </div>
             </div>
@@ -73,10 +76,9 @@ else
     <div class="container py-5">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
-                <p>You need to Log In to see the cart..</p>
-                <a href="/Customer/LogIn" class="btn btn-primary">Log In</a>
+                <p>You need to Log In to see your cart.</p>
+                <a href="@Url.Action("LogIn", "Customer")" class="btn btn-primary">Log In</a>
             </div>
         </div>
     </div>
 }
-<!-- Cart Page End -->

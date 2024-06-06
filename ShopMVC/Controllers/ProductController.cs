@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShopMVC.Data;
+using ShopMVC.Data2;
 using ShopMVC.Helpers;
 using ShopMVC.ViewModels;
 using System.Linq;
@@ -10,79 +10,89 @@ namespace ShopMVC.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly ShopMvcContext db;
+        private readonly ShopMvcContext _db;
+
         public ProductController(ShopMvcContext context)
         {
-            db = context;
+            _db = context;
         }
 
-        public async Task<IActionResult> Index(int? loai, int pageIndex = 1, int pageSize = 6)
+        public async Task<IActionResult> Index(int? categoryId, int? price, int pageIndex = 1, int pageSize = 6)
         {
-            var hangHoas = db.HangHoas.AsQueryable();
+            var query = _db.Products.AsQueryable();
 
-            if (loai.HasValue)
+            if (categoryId.HasValue)
             {
-                hangHoas = hangHoas.Where(p => p.MaLoai == loai.Value);
+                query = query.Where(p => p.CategoryId == categoryId.Value);
             }
 
-            var result = hangHoas.Select(p => new ProductVM
+            if (price.HasValue)
             {
-                MaHh = p.MaHh,
-                TenHh = p.TenHh,
-                DonGia = p.DonGia ?? 0,
-                Hinh = p.Hinh ?? "",
-                MoTaNgan = p.MoTaDonVi ?? "",
-                TenLoai = p.MaLoaiNavigation.TenLoai
+                query = query.Where(p => p.UnitPrice <= price.Value); // Filter products with prices less than or equal to the selected price
+            }
+
+            ViewBag.MinPrice = await query.MinAsync(p => p.UnitPrice) ?? 0; // Default to 0 if null
+            ViewBag.MaxPrice = await query.MaxAsync(p => p.UnitPrice) ?? 1000; // Default to 1000 if null
+
+            var result = query.Select(p => new ProductViewModel
+            {
+                ProductID = p.ProductId,
+                ProductName = p.ProductName,
+                UnitPrice = (decimal)(p.UnitPrice ?? 0),
+                ImageFileName = p.Image ?? "",
+                ShortDescription = p.UnitDescription ?? "",
+                CategoryName = p.Category.CategoryName
             });
 
-            var paginatedList = await PaginatedList<ProductVM>.CreateAsync(result, pageIndex, pageSize);
+            var paginatedList = await PaginatedList<ProductViewModel>.CreateAsync(result, pageIndex, pageSize);
             return View(paginatedList);
         }
 
+
         public async Task<IActionResult> Search(string? query, int pageIndex = 1, int pageSize = 6)
         {
-            var hangHoas = db.HangHoas.AsQueryable();
+            var products = _db.Products.AsQueryable();
 
-            if (query != null)
+            if (!string.IsNullOrWhiteSpace(query))
             {
-                hangHoas = hangHoas.Where(p => p.TenHh.Contains(query));
+                products = products.Where(p => p.ProductName.Contains(query));
             }
 
-            var result = hangHoas.Select(p => new ProductVM
+            var result = products.Select(p => new ProductViewModel
             {
-                MaHh = p.MaHh,
-                TenHh = p.TenHh,
-                DonGia = p.DonGia ?? 0,
-                Hinh = p.Hinh ?? "",
-                MoTaNgan = p.MoTaDonVi ?? "",
-                TenLoai = p.MaLoaiNavigation.TenLoai
+                ProductID = p.ProductId,
+                ProductName = p.ProductName,
+                UnitPrice = (decimal)(p.UnitPrice ?? 0),
+                ImageFileName = p.Image ?? "",
+                ShortDescription = p.UnitDescription ?? "",
+                CategoryName = p.Category.CategoryName
             });
 
-            var paginatedList = await PaginatedList<ProductVM>.CreateAsync(result, pageIndex, pageSize);
+            var paginatedList = await PaginatedList<ProductViewModel>.CreateAsync(result, pageIndex, pageSize);
             return View(paginatedList);
         }
 
         public IActionResult Detail(int id)
         {
-            var data = db.HangHoas
-                .Include(p => p.MaLoaiNavigation)
-                .SingleOrDefault(p => p.MaHh == id);
+            var product = _db.Products
+                .Include(p => p.Category)
+                .SingleOrDefault(p => p.ProductId == id);
 
-            if (data == null)
+            if (product == null)
             {
-                TempData["Message"] = $"Cannot found the product with id {id}";
-                return Redirect("/404");
+                TempData["Message"] = $"Product with ID {id} not found.";
+                return RedirectToAction("Error", "Home");  // Replace with your Error handling action/controller
             }
 
-            var result = new ProductDetailVM
+            var result = new ProductDetailViewModel
             {
-                MaHh = data.MaHh,
-                TenHh = data.TenHh,
-                DonGia = data.DonGia ?? 0,
-                ChiTiet = data.MoTa ?? string.Empty,
-                Hinh = data.Hinh,
-                MoTaNgan = data.MoTaDonVi ?? string.Empty,
-                TenLoai = data.MaLoaiNavigation.TenLoai,
+                ProductID = product.ProductId,
+                ProductName = product.ProductName,
+                UnitPrice = (decimal)(product.UnitPrice ?? 0),
+                FullDescription = product.Description ?? string.Empty,
+                ImageFileName = product.Image,
+                ShortDescription = product.UnitDescription ?? string.Empty,
+                CategoryName = product.Category.CategoryName
             };
 
             return View(result);

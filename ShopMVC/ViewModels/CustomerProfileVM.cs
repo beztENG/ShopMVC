@@ -1,25 +1,39 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShopMVC.ViewModels
 {
     public class CustomerProfileVM
     {
-        [Display(Name = "CustomerID")]
-        public string MaKh { get; set; }
+        [Display(Name = "Customer ID")]
+        public string CustomerId { get; set; } = null!;
+
         [Display(Name = "Password")]
-        public string MatKhau { get; set; }
-        [Display(Name = "Name")]
-        public string HoTen { get; set; }
-        [Display(Name = "Male ?")]
-        public bool GioiTinh { get; set; }
-        [Display(Name = "Birth")]
-        public DateTime NgaySinh { get; set; }
+        [DataType(DataType.Password)] // For password masking in input fields
+        public string Password { get; set; } = null!;
+
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; } = null!;
+
+        [Display(Name = "Gender")]
+        public bool Gender { get; set; } // Consider using an enum for clarity
+
+        [Display(Name = "Birth Date")]
+        [DataType(DataType.Date)] // For date input fields
+        public DateTime BirthDate { get; set; }
+
         [Display(Name = "Address")]
-        public string DiaChi { get; set; }
-        [Display(Name = "Phone number")]
-        public string DienThoai { get; set; }
+        public string Address { get; set; } = null!;
+
+        [Display(Name = "Phone Number")]
+        [Phone] // For phone number validation
+        public string Phone { get; set; }
+
         [Display(Name = "Email")]
-        public string Email { get; set; }
-        public string? Hinh { get; set; }
+        [EmailAddress] // For email address validation
+        public string Email { get; set; } = null!;
+
+        [Display(Name = "Profile Image")]
+        public string? Image { get; set; }
     }
 }

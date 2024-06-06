@@ -10,7 +10,8 @@
         <div class="row g-4">
             <div class="col-lg-3">
                 @* Phần Menu Loại *@
-                @if (Context.User.Identity.IsAuthenticated){
+                @if (Context.User.Identity.IsAuthenticated)
+                {
                     <div class="row g-4">
                         <div class="col-lg-12">
                             @await Component.InvokeAsync("MenuType")
@@ -22,10 +23,15 @@
                             @await Html.PartialAsync("_SearchPanel")
                         </div>
                     </div>
+                    <div class="row g-4">
+                        <div class="col-lg-12">
+                            @await Html.PartialAsync("_PriceFilterBar")
+                        </div>
+                    </div>
                 }
             </div>
             <div class="col-lg-9">
-                <div class="row g-4 justify-content-center">
+                <div class="row g-4 justify-content-center" id="productList">
                     @RenderBody()
                 </div>
             </div>

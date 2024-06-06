@@ -1,0 +1,30 @@
+﻿<div class="price-filter-bar">
+    <label for="price">Price:</label>
+    <input type="range" id="price" min="0" max="@ViewBag.MaxPrice" value="@ViewBag.MinPrice" />
+    <span id="priceDisplay">@ViewBag.MinPrice</span>
+</div>
+
+<script>
+    const priceSlider = document.getElementById("price");
+    const priceDisplay = document.getElementById("priceDisplay");
+
+    priceSlider.addEventListener("input", () => {
+        priceDisplay.textContent = priceSlider.value;
+        filterProducts(priceSlider.value); // Filter while dragging
+    });
+
+    // Filter on release (mouseup event)
+    priceSlider.addEventListener("mouseup", () => filterProducts(priceSlider.value));
+
+    function filterProducts(price) {
+        const productList = $('#productList');
+        const productElements = productList.find('.product-item');
+
+        productElements.each(function () {
+            const productPrice = parseFloat($(this).data('price'));
+            $(this).toggle(productPrice <= price); // Show if price is less than or equal, hide otherwise
+        });
+    }
+
+
+</script>

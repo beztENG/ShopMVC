@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ShopMVC.ViewModels.ProductVM>
+﻿@model IEnumerable<ShopMVC.ViewModels.ProductViewModel>
 
 <h6 class="text-center mb-4">There are <b>@Model.Count()</b> products available.</h6>
 
@@ -8,19 +8,19 @@
         <div class="col-md-6 col-lg-6 col-xl-4">
             <div class="card border-0 shadow rounded position-relative fruite-item">
                 <div class="fruite-img">
-                    <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.MaHh">
-                        <img src="~/Hinh/HangHoa/@item.Hinh" class="card-img-top img-fluid w-100 rounded-top" alt="@item.TenHh">
+                    <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.ProductID">
+                        <img src="~/Image/Product/@item.ImageFileName" class="card-img-top img-fluid w-100 rounded-top" alt="@item.ProductName">
                     </a>
                 </div>
-                <div class="text-white bg-secondary px-3 py-1 rounded-top position-absolute" style="top: 10px; left: 10px;">@item.TenLoai</div>
+                <div class="text-white bg-secondary px-3 py-1 rounded-top position-absolute" style="top: 10px; left: 10px;">@item.CategoryName</div>
                 <div class="card-body p-4 border border-secondary border-top-0 rounded-bottom">
-                    <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.MaHh">
-                        <h4 class="card-title">@item.TenHh</h4>
+                    <a asp-action="Detail" asp-controller="Product" asp-route-id="@item.ProductID">
+                        <h4 class="card-title">@item.ProductName</h4>
                     </a>
-                    <p class="card-text">@item.MoTaNgan</p>
+                    <p class="card-text">@item.ShortDescription</p>
                     <div class="d-flex justify-content-between flex-lg-wrap">
-                        <p class="text-dark fs-5 fw-bold mb-0">$@item.DonGia</p>
-                        <a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn btn-primary border border-secondary rounded-pill px-3 text-white">
+                        <p class="text-dark fs-5 fw-bold mb-0">$@item.UnitPrice.ToString("0.00")</p> <a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.ProductID"
+                            class="btn btn-primary border border-secondary rounded-pill px-3 text-white">
                             <i class="fa fa-shopping-bag me-2"></i> Add to Cart
                         </a>
                     </div>
@@ -29,4 +29,3 @@
         </div>
     }
 </div>
-

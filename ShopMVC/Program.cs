@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using ShopMVC.Data;
+using ShopMVC.Data2;
 using ShopMVC.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);

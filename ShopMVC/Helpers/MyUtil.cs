@@ -1,8 +1,14 @@
-﻿public static class MyUtil
+﻿using Microsoft.AspNetCore.Http; // For IFormFile
+using System;
+using System.IO;
+
+namespace ShopMVC.Helpers;
+
+public static class MyUtil
 {
-    public static string UpLoadHinh(IFormFile file, string folder)
+    public static string UploadImage(IFormFile file, string folder)
     {
-        var folderPath = Path.Combine("wwwroot", "Hinh", folder);
+        var folderPath = Path.Combine("wwwroot", "Image", folder);
         if (!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
@@ -19,9 +25,9 @@
         return fileName;
     }
 
-    public static void DeleteHinh(string fileName, string folder)
+    public static void DeleteImage(string fileName, string folder)
     {
-        var filePath = Path.Combine("wwwroot", "Hinh", folder, fileName);
+        var filePath = Path.Combine("wwwroot", "Image", folder, fileName);
         if (File.Exists(filePath))
         {
             File.Delete(filePath);

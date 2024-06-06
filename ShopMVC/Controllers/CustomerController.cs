@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopMVC.Data;
+using ShopMVC.Data2;
 using ShopMVC.Helpers;
 using ShopMVC.ViewModels;
 
@@ -29,39 +29,45 @@ namespace ShopMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(RegisterVM model, IFormFile? Hinh)
+        [HttpPost]
+        public IActionResult Register(RegisterViewModel model, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var khachHang = _mapper.Map<KhachHang>(model);
-                    khachHang.HieuLuc = true;
-                    khachHang.VaiTro = 0;
+                    var customer = _mapper.Map<Customer>(model);
+                    customer.Active = true;
+                    customer.Role = 0;
 
                     string saltKey = Guid.NewGuid().ToString();
+                    customer.CustomerId = Guid.NewGuid().ToString();
+                    customer.Password = model.Password.ToSHA256Hash(saltKey);
+                    customer.RandomKey = saltKey;
 
-                    khachHang.MatKhau = model.MatKhau.ToSHA256Hash(saltKey);
-
-                    khachHang.RandomKey = saltKey;
-
-                    if (Hinh != null && Hinh.Length > 0)
+                    if (Image != null && Image.Length > 0)
                     {
-                        khachHang.Hinh = MyUtil.UpLoadHinh(Hinh, "KhachHang");
+                        customer.Image = MyUtil.UploadImage(Image, "Customer");
                     }
 
-                    db.Add(khachHang);
+                    db.Add(customer);
                     db.SaveChanges();
                     return Redirect("/Customer/LogIn");
                 }
                 catch (Exception ex)
                 {
-                    var mess = $"{ex.Message} shh";
-                    ModelState.AddModelError("", "An error occurred while processing your registration. Please try again.");
+                    // Log the detailed exception message including inner exceptions
+                    var errorMessage = $"Error occurred during registration: {ex.Message}\n{ex.StackTrace}";
+                    if (ex.InnerException != null)
+                    {
+                        errorMessage += $"\nInner Exception: {ex.InnerException.Message}\n{ex.InnerException.StackTrace}";
+                    }
+                    ModelState.AddModelError("", errorMessage); // Temporarily expose detailed errors for debugging
                 }
             }
             return View(model);
         }
+
         #endregion
 
         #region Login in
@@ -78,24 +84,24 @@ namespace ShopMVC.Controllers
             ViewBag.ReturnUrl = ReturnUrl;
             if (ModelState.IsValid)
             {
-                var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.UserName);
-                if (khachHang == null)
+                var customer = db.Customers.SingleOrDefault(cus => cus.Email == model.Email);
+                if (customer == null)
                 {
                     ModelState.AddModelError("error", "This customer is not exist in the database.");
                 }
                 else
                 {
-                    if (!khachHang.HieuLuc)
+                    if (!customer.Active)
                     {
                         ModelState.AddModelError("error", "This account has been locked. Please contact Admin.");
                     }
                     else
                     {
-                        string saltKey = khachHang.RandomKey;
+                        string saltKey = customer.RandomKey;
 
                         string hashedPassword = model.Password.ToSHA256Hash(saltKey); // or ToSHA512Hash
 
-                        if (khachHang.MatKhau != hashedPassword)
+                        if (customer.Password != hashedPassword)
                         {
                             ModelState.AddModelError("error", "Wrong information.");
                         }
@@ -105,9 +111,9 @@ namespace ShopMVC.Controllers
 
 
                             {
-                                new Claim(ClaimTypes.Email, khachHang.Email),
-                                new Claim(ClaimTypes.Name, khachHang.HoTen),
-                                new Claim("CustomerID", khachHang.MaKh),
+                                new Claim(ClaimTypes.Email, customer.Email),
+                                new Claim(ClaimTypes.Name, customer.FullName),
+                                new Claim("CustomerId", customer.CustomerId),
                                 new Claim(ClaimTypes.Role, "Customer")
                             };
                             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -133,42 +139,42 @@ namespace ShopMVC.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-            var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == User.FindFirst("CustomerID").Value);
+            var customer = db.Customers.SingleOrDefault(cus => cus.CustomerId == User.FindFirst("CustomerID").Value);
 
-            if (khachHang == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            var customerProfileVM = _mapper.Map<CustomerProfileVM>(khachHang);
+            var customerProfileVM = _mapper.Map<CustomerProfileVM>(customer);
 
             return View(customerProfileVM);
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult UpdateProfileImage(IFormFile Hinh)
+        public IActionResult UpdateProfileImage(IFormFile Image)
         {
-            if (Hinh != null && Hinh.Length > 0)
+            if (Image != null && Image.Length > 0)
             {
-                var customerId = User.FindFirst("CustomerID").Value;
-                var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == customerId);
+                var customerId = User.FindFirst("CustomerId").Value;
+                var customer = db.Customers.SingleOrDefault(cus => cus.CustomerId == customerId);
 
-                if (khachHang == null)
+                if (customer == null)
                 {
                     return NotFound();
                 }
 
                 try
                 {
-                    var newImage = MyUtil.UpLoadHinh(Hinh, "KhachHang");
+                    var newImage = MyUtil.UploadImage(Image, "Customer");
 
-                    if (!string.IsNullOrEmpty(khachHang.Hinh))
+                    if (!string.IsNullOrEmpty(customer.Image))
                     {
-                        MyUtil.DeleteHinh(khachHang.Hinh, "KhachHang");
+                        MyUtil.DeleteImage(customer.Image, "Customer");
                     }
 
-                    khachHang.Hinh = newImage;
+                    customer.Image = newImage;
                     db.SaveChanges();
                 }
                 catch (Exception ex)
