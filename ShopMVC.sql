@@ -94,6 +94,8 @@ CREATE TABLE [dbo].[Customer](
 ) ON [PRIMARY]
 GO
 
+
+
 CREATE TABLE [dbo].[Category](
 	[CategoryID] [int] IDENTITY(1,1) NOT NULL,
 	[CategoryName] [nvarchar](50) NOT NULL,
@@ -113,6 +115,18 @@ AS 
 	SELECT od.*, p.ProductName
 	FROM OrderDetail od JOIN Product p 
 		ON p.ProductID = od.ProductID
+GO
+
+-- Create User table with a unique constraint for CustomerID
+CREATE TABLE [dbo].[User] (
+    [UserID]        INT             IDENTITY(1,1) NOT NULL,  -- Primary key for the User table
+    [CustomerID]    NVARCHAR(50)   NOT NULL UNIQUE,         -- Foreign key referencing CustomerID (unique)
+    [Password]      NVARCHAR(50)   NULL,
+    [Email]         NVARCHAR(50)   NOT NULL UNIQUE,          -- Make Email unique as well (optional, but recommended)
+    [Role]          INT            NOT NULL DEFAULT 0, 
+    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([UserID] ASC),
+    CONSTRAINT [FK_User_Customer] FOREIGN KEY ([CustomerID]) REFERENCES [dbo].[Customer] ([CustomerID]) ON DELETE CASCADE ON UPDATE CASCADE 
+) ON [PRIMARY];
 GO
 
 
@@ -264,21 +278,25 @@ GO
 ALTER TABLE [dbo].[Product] CHECK CONSTRAINT [FK_Product_Category];
 GO
 
--- Alter Order table to add foreign key constraint
-ALTER TABLE [dbo].[Order] WITH CHECK ADD CONSTRAINT [FK_Order_Customer] 
-FOREIGN KEY([CustomerID]) -- Establish a relationship between Order and Customer based on CustomerID
-REFERENCES [dbo].[Customer] ([CustomerID])
-ON UPDATE CASCADE
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_Order_Customer];
-GO
-
 -- Select all data from the Customer table
 SELECT * FROM [dbo].[Customer];
+Select* from [dbo].[User]
+
+
+update [dbo].[User]
+set Active = 'true'
+where UserID = 5
+
+Update [dbo].[Customer]
+set FullName = 'Dinh Quoc Vinh'
+where Email = 'admin@admin.com'
+
+alter table [dbo].[User]
+add Active bit 
 
 -- Select all data from the Product table
 SELECT * FROM dbo.Product;
-
+Select * from dbo.Category;
+Select * from [dbo].[Order]
 
 --Drop DATABASE ShopMVC;
