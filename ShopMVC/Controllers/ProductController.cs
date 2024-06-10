@@ -19,22 +19,24 @@ namespace ShopMVC.Controllers
 
         public async Task<IActionResult> Index(int? categoryId, int? price, int pageIndex = 1, int pageSize = 6)
         {
-            var query = _db.Products.AsQueryable();
+            var products = _db.Products.AsQueryable();
 
             if (categoryId.HasValue)
             {
-                query = query.Where(p => p.CategoryId == categoryId.Value);
+                products = products.Where(p => p.CategoryId == categoryId.Value);
             }
+
+            ViewBag.MinPrice = 1; // Setting minimum price to 1
+            ViewBag.MaxPrice = await products.MaxAsync(p => p.UnitPrice) ?? 1000; // Setting maximum price to the maximum price of the products in the filtered list
+            ViewBag.SelectedPrice = price ?? (int)ViewBag.MaxPrice; // Default to max price if no price filter is set
+            ViewBag.CategoryId = categoryId;
 
             if (price.HasValue)
             {
-                query = query.Where(p => p.UnitPrice <= price.Value); // Filter products with prices less than or equal to the selected price
+                products = products.Where(p => p.UnitPrice <= price.Value);
             }
 
-            ViewBag.MinPrice = await query.MinAsync(p => p.UnitPrice) ?? 0; // Default to 0 if null
-            ViewBag.MaxPrice = await query.MaxAsync(p => p.UnitPrice) ?? 1000; // Default to 1000 if null
-
-            var result = query.Select(p => new ProductViewModel
+            var result = products.Select(p => new ProductViewModel
             {
                 ProductID = p.ProductId,
                 ProductName = p.ProductName,
@@ -47,6 +49,9 @@ namespace ShopMVC.Controllers
             var paginatedList = await PaginatedList<ProductViewModel>.CreateAsync(result, pageIndex, pageSize);
             return View(paginatedList);
         }
+
+
+
 
 
         public async Task<IActionResult> Search(string? query, int pageIndex = 1, int pageSize = 6)
@@ -81,7 +86,7 @@ namespace ShopMVC.Controllers
             if (product == null)
             {
                 TempData["Message"] = $"Product with ID {id} not found.";
-                return RedirectToAction("Error", "Home");  // Replace with your Error handling action/controller
+                return RedirectToAction("Error", "Home");
             }
 
             var result = new ProductDetailViewModel
@@ -97,5 +102,7 @@ namespace ShopMVC.Controllers
 
             return View(result);
         }
+
+
     }
 }

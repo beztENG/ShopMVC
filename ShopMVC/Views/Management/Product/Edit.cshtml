@@ -1,0 +1,91 @@
+﻿@model ShopMVC.Data2.Product
+
+@{
+	ViewData["Title"] = "Admin - Edit Product";
+}
+
+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card shadow-lg">
+				<div class="card-header bg-primary text-white">
+					<h2 class="card-title">Edit Product</h2>
+				</div>
+				<div class="card-body">
+
+					<form asp-action="ProductEdit" enctype="multipart/form-data">
+						<input type="hidden" asp-for="ProductId" />
+
+						<div class="mb-3">
+							<label asp-for="ProductName" class="form-label"></label>
+							<input asp-for="ProductName" class="form-control" />
+							<span asp-validation-for="ProductName" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="ProductAlias" class="form-label"></label>
+							<input asp-for="ProductAlias" class="form-control" />
+							<span asp-validation-for="ProductAlias" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="CategoryId" class="form-label"></label>
+							<input asp-for="CategoryId" class="form-control" />
+							<span asp-validation-for="CategoryId" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="UnitDescription" class="form-label"></label>
+							<input asp-for="UnitDescription" class="form-control" />
+							<span asp-validation-for="UnitDescription" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="UnitPrice" class="form-label"></label>
+							<input asp-for="UnitPrice" class="form-control" />
+							<span asp-validation-for="UnitPrice" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="ShippingFee" class="form-label"></label>
+							<input asp-for="ShippingFee" class="form-control" />
+							<span asp-validation-for="ShippingFee" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="Image" class="form-label"></label>
+							<input asp-for="Image" class="form-control" type="file" />
+							<span asp-validation-for="Image" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="ProductionDate" class="form-label"></label>
+							<input asp-for="ProductionDate" class="form-control" type="date" />
+							<span asp-validation-for="ProductionDate" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="Discount" class="form-label"></label>
+							<input asp-for="Discount" class="form-control" />
+							<span asp-validation-for="Discount" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="Views" class="form-label"></label>
+							<input asp-for="Views" class="form-control" />
+							<span asp-validation-for="Views" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="Description" class="form-label"></label>
+							<textarea asp-for="Description" class="form-control"></textarea>
+							<span asp-validation-for="Description" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="SupplierId" class="form-label"></label>
+							<input asp-for="SupplierId" class="form-control" />
+							<span asp-validation-for="SupplierId" class="text-danger"></span>
+						</div>
+						<div class="card-footer">
+							<div class="form-group">
+								<input type="submit" value="Save" class="btn btn-primary" />
+								<a asp-action="ProductIndex" class="btn btn-secondary">Back to List</a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

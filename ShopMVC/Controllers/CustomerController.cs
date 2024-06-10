@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ShopMVC.Data2;
 using ShopMVC.Helpers;
 using ShopMVC.ViewModels;
@@ -29,13 +30,18 @@ namespace ShopMVC.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         public IActionResult Register(RegisterViewModel model, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (db.Users.Any(u => u.Email == model.Email))
+                    {
+                        ModelState.AddModelError("Email", "This email address is already in use. Please use a different email.");
+                        return View(model);
+                    }
+
                     var customer = _mapper.Map<Customer>(model);
                     customer.Active = true;
                     customer.Role = 0;
@@ -50,6 +56,17 @@ namespace ShopMVC.Controllers
                         customer.Image = MyUtil.UploadImage(Image, "Customer");
                     }
 
+                    // Create the associated User entity
+                    var user = new User
+                    {
+                        CustomerId = customer.CustomerId,
+                        Password = customer.Password, // You might store it differently for security reasons (hash it)
+                        Email = customer.Email,
+                        Role = customer.Role,
+                        Active = customer.Active,
+                    };
+
+                    db.Add(user);
                     db.Add(customer);
                     db.SaveChanges();
                     return Redirect("/Customer/LogIn");
@@ -84,49 +101,60 @@ namespace ShopMVC.Controllers
             ViewBag.ReturnUrl = ReturnUrl;
             if (ModelState.IsValid)
             {
-                var customer = db.Customers.SingleOrDefault(cus => cus.Email == model.Email);
-                if (customer == null)
+                // Find the User by email
+                var user = db.Users.Include(u => u.Customer).SingleOrDefault(u => u.Email == model.Email);
+
+                if (user == null)
                 {
-                    ModelState.AddModelError("error", "This customer is not exist in the database.");
+                    ModelState.AddModelError("error", "Invalid email or password.");
                 }
                 else
                 {
-                    if (!customer.Active)
+                    if (user.Active == false)
                     {
                         ModelState.AddModelError("error", "This account has been locked. Please contact Admin.");
                     }
                     else
                     {
-                        string saltKey = customer.RandomKey;
+                        string saltKey = user.Customer.RandomKey; // Get salt from the associated Customer
+                        string hashedPassword = model.Password.ToSHA256Hash(saltKey);
 
-                        string hashedPassword = model.Password.ToSHA256Hash(saltKey); // or ToSHA512Hash
-
-                        if (customer.Password != hashedPassword)
+                        if (user.Password != hashedPassword)
                         {
-                            ModelState.AddModelError("error", "Wrong information.");
+                            ModelState.AddModelError("error", "Invalid email or password.");
                         }
                         else
                         {
                             var claims = new List<Claim>
-
-
                             {
-                                new Claim(ClaimTypes.Email, customer.Email),
-                                new Claim(ClaimTypes.Name, customer.FullName),
-                                new Claim("CustomerId", customer.CustomerId),
+                                new Claim(ClaimTypes.Role, user.Role.ToString()) ,
+                                new Claim(ClaimTypes.Email, user.Email),
+                                new Claim(ClaimTypes.Name, user.Customer.FullName),
+                                new Claim("CustomerId", user.CustomerId.ToString()),
                                 new Claim(ClaimTypes.Role, "Customer")
                             };
                             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                             await HttpContext.SignInAsync(claimsPrincipal);
 
-                            if (Url.IsLocalUrl(ReturnUrl))
+
+                            // After successful authentication, check the user's role
+                            if (user.Role == 1) // Assuming 1 is the role for management access
                             {
-                                return Redirect(ReturnUrl);
+                                // Redirect to the management system
+                                return RedirectToAction("Index", "Home");
                             }
                             else
                             {
-                                return Redirect("/Product");
+                                // Redirect to the product list (or the original return URL)
+                                if (Url.IsLocalUrl(ReturnUrl))
+                                {
+                                    return Redirect(ReturnUrl);
+                                }
+                                else
+                                {
+                                    return RedirectToAction("Index", "Home");
+                                }
                             }
                         }
                     }

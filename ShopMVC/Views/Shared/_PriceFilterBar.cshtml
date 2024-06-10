@@ -1,30 +1,26 @@
 ﻿<div class="price-filter-bar">
-    <label for="price">Price:</label>
-    <input type="range" id="price" min="0" max="@ViewBag.MaxPrice" value="@ViewBag.MinPrice" />
-    <span id="priceDisplay">@ViewBag.MinPrice</span>
+    <form id="priceFilterForm" asp-action="Index" method="get">
+        <label for="price">Price:</label>
+        <input type="range" id="price" name="price" min="1" max="1000" value="@ViewBag.SelectedPrice" oninput="updatePriceDisplay(this.value)" />
+        <span id="priceDisplay">@ViewBag.SelectedPrice</span>
+        <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+        <button type="submit" style="display: none;">Submit</button>
+    </form>
 </div>
 
 <script>
+    function updatePriceDisplay(value) {
+        document.getElementById('priceDisplay').textContent = value;
+    }
+
     const priceSlider = document.getElementById("price");
     const priceDisplay = document.getElementById("priceDisplay");
 
     priceSlider.addEventListener("input", () => {
-        priceDisplay.textContent = priceSlider.value;
-        filterProducts(priceSlider.value); // Filter while dragging
+        updatePriceDisplay(priceSlider.value);
     });
 
-    // Filter on release (mouseup event)
-    priceSlider.addEventListener("mouseup", () => filterProducts(priceSlider.value));
-
-    function filterProducts(price) {
-        const productList = $('#productList');
-        const productElements = productList.find('.product-item');
-
-        productElements.each(function () {
-            const productPrice = parseFloat($(this).data('price'));
-            $(this).toggle(productPrice <= price); // Show if price is less than or equal, hide otherwise
-        });
-    }
-
-
+    priceSlider.addEventListener("change", () => {
+        document.getElementById("priceFilterForm").submit();
+    });
 </script>

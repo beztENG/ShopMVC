@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ShopMVC.Data2;
-using ShopMVC.Data2;
 using ShopMVC.ViewModels;
 
 namespace ShopMVC.Helpers

@@ -6,7 +6,7 @@
         @if (Model.HasPreviousPage)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="6">Previous</a>
+                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId">Previous</a>
             </li>
         }
         else
@@ -27,7 +27,7 @@
             else
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="6">@i</a>
+                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId">@i</a>
                 </li>
             }
         }
@@ -35,7 +35,7 @@
         @if (Model.HasNextPage)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="6">Next</a>
+                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId">Next</a>
             </li>
         }
         else

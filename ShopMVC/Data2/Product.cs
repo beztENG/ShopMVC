@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
+using ShopMVC.Data2;
 
 namespace ShopMVC.Data2;
 
@@ -7,10 +7,12 @@ public partial class Product
 {
     public int ProductId { get; set; }
 
+    [Required]
     public string ProductName { get; set; } = null!;
 
     public string? ProductAlias { get; set; }
 
+    [Required]
     public int CategoryId { get; set; }
 
     public string? UnitDescription { get; set; }
@@ -29,6 +31,7 @@ public partial class Product
 
     public string? Description { get; set; }
 
+    [Required]
     public string SupplierId { get; set; } = null!;
 
     public virtual Category Category { get; set; } = null!;

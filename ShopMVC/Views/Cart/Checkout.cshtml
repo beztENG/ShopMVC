@@ -4,53 +4,55 @@
     ViewData["Title"] = "Checkout";
 }
 
-<div class="container py-5">
-    <h1 class="mb-4 text-center">Order Summary</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title text-center">Order Summary</h2>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td class="text-end">$@item.UnitPrice.ToString("0.00")</td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end">$@item.TotalPrice.ToString("0.00")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Subtotal:</td>
+                                <td class="text-end">$@ViewBag.Subtotal.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Shipping:</td>
+                                <td class="text-end">$@ViewBag.ShippingTotal.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="fw-bold text-end">Total:</td>
+                                <td class="text-end">$@ViewBag.Total.ToString("0.00")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
 
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.ProductName</td>
-                            <td>$@item.UnitPrice.ToString("0.00")</td>
-                            <td>@item.Quantity</td>
-                            <td>$@item.TotalPrice.ToString("0.00")</td>
-                        </tr>
-                    }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3">Subtotal:</td>
-                        <td>$@ViewBag.Subtotal.ToString("0.00")</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">Shipping:</td>
-                        <td>$@ViewBag.ShippingTotal.ToString("0.00")</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">Total:</td>
-                        <td>$@ViewBag.Total.ToString("0.00")</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-8 offset-md-2 text-center">
-            @* Replace this with your actual payment processing form/button *@
-            <button class="btn btn-primary btn-lg">Place Order</button>
+                    <div class="mt-4 text-center">
+                        <button class="btn btn-primary btn-lg">Place Order</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -18,6 +18,7 @@ namespace ShopMVC.Controllers
             return View();
         }
 
+
         [Route("/404")]
 		public IActionResult PageNotFound()
 		{

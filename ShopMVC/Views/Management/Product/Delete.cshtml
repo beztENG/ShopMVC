@@ -1,0 +1,33 @@
+﻿@model ShopMVC.Data2.Product
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Admin - Delete Product";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="card-title">Delete Product</h2>
+                </div>
+                <div class="card-body text-center">
+                    <h4 class="card-subtitle mb-4">@Model.ProductName</h4>
+
+                    <img src="@(string.IsNullOrEmpty(Model.Image) ? Url.Content("~/Image/Customer/Photo.gif") : Url.Content($"~/Image/Product/{Model.Image}"))"
+                         alt="Product Image" class="img-fluid rounded" style="max-width: 200px; height: auto;" />
+
+                    <p class="text-muted mt-3">Are you sure you want to delete this product? This action cannot be undone.</p>
+
+                    <form asp-action="ProductDelete" method="post" class="mt-4">
+                        <input type="hidden" asp-for="ProductId" />
+                        <input type="hidden" name="confirm" value="true" />
+                        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                        <a asp-action="ProductIndex" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
