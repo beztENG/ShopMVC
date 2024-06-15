@@ -3,46 +3,62 @@
 
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center mt-4" style="display: flex; flex-wrap: wrap;">
+        @* First Page Button *@
+        <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="1"
+               asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice"
+               asp-route-categoryId="@ViewBag.CategoryId" asp-route-query="@ViewBag.SearchQuery">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+        </li>
+
+        @* Previous Page Button (Unchanged) *@
         @if (Model.HasPreviousPage)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId">Previous</a>
+                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId" asp-route-query="@ViewBag.SearchQuery">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
             </li>
         }
         else
         {
             <li class="page-item disabled">
-                <a class="page-link">Previous</a>
+                <a class="page-link"><i class="bi bi-chevron-left"></i></a>
             </li>
         }
 
+        @* Page Number Buttons (Unchanged) *@
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
-            if (i == Model.PageIndex)
-            {
-                <li class="page-item active">
-                    <a class="page-link">@i</a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId">@i</a>
-                </li>
-            }
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId" asp-route-query="@ViewBag.SearchQuery">@i</a>
+            </li>
         }
 
+        @* Next Page Button (Unchanged) *@
         @if (Model.HasNextPage)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId">Next</a>
+                <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice" asp-route-categoryId="@ViewBag.CategoryId" asp-route-query="@ViewBag.SearchQuery">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
             </li>
         }
         else
         {
             <li class="page-item disabled">
-                <a class="page-link">Next</a>
+                <a class="page-link"><i class="bi bi-chevron-right"></i></a>
             </li>
         }
+
+        @* Last Page Button *@
+        <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="@Model.TotalPages"
+               asp-route-pageSize="6" asp-route-price="@ViewBag.SelectedPrice"
+               asp-route-categoryId="@ViewBag.CategoryId" asp-route-query="@ViewBag.SearchQuery">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </li>
     </ul>
 </nav>

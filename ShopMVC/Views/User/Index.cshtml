@@ -1,95 +1,108 @@
 ﻿@model IEnumerable<ShopMVC.Data2.User>
 
 @{
-    ViewData["Title"] = "Manage Users";
+	ViewData["Title"] = "Manage Users";
 }
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white d-flex align-items-center">
-                    <h2 class="card-title me-auto">User Management</h2>
-                    <div class="input-group rounded-pill" style="width: 300px;">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Users Name" />
-                        <button type="button" class="btn btn-outline-secondary" id="clearSearchButton">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
+@if (Context.User.Identity.IsAuthenticated && Context.User.IsInRole("1"))
+{
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card shadow-lg">
+					<div class="card-header bg-primary text-white d-flex align-items-center">
+						<h2 class="card-title me-auto">User Management</h2>
+						<div class="input-group rounded-pill" style="width: 300px;">
+							<input type="text" id="searchInput" class="form-control" placeholder="Search by Username" />
+							<button type="button" class="btn btn-outline-secondary" id="clearSearchButton">
+								<i class="fas fa-times"></i>
+							</button>
+						</div>
+					</div>
 
-                <div class="card-body">
-                    <table class="table table-hover table-bordered" id="userTable">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Customer ID</th>
-                                <th>Email</th>
-                                <th>Full Name</th>
-                                <th>Active</th>
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var user in Model)
-                            {
-                                <tr>
-                                    <td>@user.CustomerId</td>
-                                    <td>@user.Email</td>
-                                    <td>@user.Customer.FullName</td>
-                                    <td>
-                                        @if (user.Active)
-                                        {
-                                            <span class="badge bg-success">Active</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger">Inactive</span>
-                                        }
-                                    </td>
-                                    <td class="text-center">
-                                        <form asp-action="Activate" method="post" style="display: inline;">
-                                            <input type="hidden" name="id" value="@user.UserId" />
-                                            <input type="hidden" name="active" value="@(user.Active ? "false" : "true")" />
-                                            <button type="submit" class="btn btn-sm btn-@(user.Active ? "danger" : "success")">
-                                                <i class="fas fa-@(user.Active ? "ban" : "check-circle")"></i> @(user.Active ? "Deactivate" : "Activate")
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+					<div class="card-body">
+						<table class="table table-hover table-bordered" id="userTable">
+							<thead class="table-light">
+								<tr>
+									<th>Customer ID</th>
+									<th>Email</th>
+									<th>Full Name</th>
+									<th>Active</th>
+									<th class="text-center">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var user in Model)
+								{
+									<tr>
+										<td>@user.CustomerId</td>
+										<td>@user.Email</td>
+										<td>@user.Customer.FullName</td>
+										<td>
+											@if (user.Active)
+											{
+												<span class="badge bg-success">Active</span>
+											}
+											else
+											{
+												<span class="badge bg-danger">Inactive</span>
+											}
+										</td>
+										<td class="text-center">
+											<form asp-action="Activate" method="post" style="display: inline;">
+												<input type="hidden" name="id" value="@user.UserId" />
+												<input type="hidden" name="active" value="@(user.Active ? "false" : "true")" />
+												<button type="submit" class="btn btn-sm btn-@(user.Active ? "danger" : "success")">
+													<i class="fas fa-@(user.Active ? "ban" : "check-circle")"></i> @(user.Active ? "Deactivate" : "Activate")
+												</button>
+											</form>
+											<form asp-action="Activate" method="post" style="display: inline;">
+											</form>
+											<a asp-action="CustomerOrders" asp-controller="User" asp-route-customerId="@user.CustomerId" class="btn btn-sm btn-info ms-2">
+												<i class="fas fa-shopping-cart"></i> View Orders
+											</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<script>
-    const searchInput = document.getElementById('searchInput');
-    const clearButton = document.getElementById('clearSearchButton');
-    const userTable = document.getElementById('userTable');
+	<script>
+		const searchInput = document.getElementById('searchInput');
+		const clearButton = document.getElementById('clearSearchButton');
+		const userTable = document.getElementById('userTable');
 
-    searchInput.addEventListener('input', filterTable);
-    clearButton.addEventListener('click', () => {
-        searchInput.value = '';
-        filterTable();
-    });
+		searchInput.addEventListener('input', filterTable);
+		clearButton.addEventListener('click', () => {
+			searchInput.value = '';
+			filterTable();
+		});
 
-    function filterTable() {
-        const filter = searchInput.value.toUpperCase();
-        const rows = userTable.getElementsByTagName('tr');
+		function filterTable() {
+			const filter = searchInput.value.toUpperCase();
+			const rows = userTable.getElementsByTagName('tr');
 
-        for (let i = 0; i < rows.length; i++) {
-            const fullNameCell = rows[i].getElementsByTagName('td')[2]; // Full name is in the third column
-            if (fullNameCell) {
-                const txtValue = fullNameCell.textContent || fullNameCell.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    rows[i].style.display = "";
-                } else {
-                    rows[i].style.display = "none";
-                }
-            }
-        }
-    }
-</script>
+			for (let i = 0; i < rows.length; i++) {
+				const fullNameCell = rows[i].getElementsByTagName('td')[2]; // Full name is in the third column
+				if (fullNameCell) {
+					const txtValue = fullNameCell.textContent || fullNameCell.innerText;
+					if (txtValue.toUpperCase().indexOf(filter) > -1) {
+						rows[i].style.display = "";
+					} else {
+						rows[i].style.display = "none";
+					}
+				}
+			}
+		}
+	</script>
+}
+else
+{
+	@await Html.PartialAsync("_AuthorizeScreen")
+
+}

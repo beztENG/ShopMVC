@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopMVC.Data2;
 using System.Linq;
@@ -18,7 +19,7 @@ public class UserController : Controller
     {
         var users = await _db.Users
             .Include(u => u.Customer)
-            .Where(u => u.Role != 1) // Exclude admin users
+            .Where(u => u.Role != 1)
             .ToListAsync();
         return View(users);
     }
@@ -42,4 +43,23 @@ public class UserController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    public async Task<IActionResult> CustomerOrders(string customerId)
+    {
+        if (string.IsNullOrEmpty(customerId))
+        {
+            return BadRequest("CustomerId is required");
+        }
+
+        var orders = await _db.Orders
+            .Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Product)
+            .Where(o => o.CustomerId == customerId)
+            .OrderByDescending(o => o.OrderDate) // Sort by order date (newest first)
+            .ToListAsync();
+
+        ViewBag.CustomerId = customerId; // Pass the customerId to the view
+        return View(orders); // You can reuse your HistoryPurchase view or create a new one
+    }
+
 }

@@ -1,9 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Http
 
 <div class="navbar-custom">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg" style="background-color: black">
         <div class="container">
-            <a href="/" class="navbar-brand"><h1 class="text-secondary mb-0">ShopMVC</h1></a>
+            <a href="/" class="navbar-brand d-flex align-items-center">
+                <img src="~/Image/Logo/MVCLogo.jpg" alt="Logo" class="logo-image me-2">
+                <h2 class="text-secondary mb-0 font-monospace">ShopMVC</h2>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -12,22 +15,33 @@
                     @if (!Context.User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
-                            <a href="/Customer/LogIn" class="nav-link">Login</a>
+                            <a href="/Customer/LogIn" class="nav-link hover-effect">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a href="/Customer/Register" class="nav-link">Register</a>
+                            <a href="/Customer/Register" class="nav-link hover-effect">Register</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a href="/" class="nav-link">Home</a>
+                            <a href="/" class="nav-link hover-effect">
+                                <i class="fas fa-home"></i> Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/Product/Index" class="nav-link">Shop</a>
+                            <a href="/Product/Index" class="nav-link hover-effect">
+                                <i class="fas fa-store-alt"></i> Shop
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/Customer/LogOut" class="nav-link">Logout</a>
+                            <a href="/Customer/HistoryPurchase" class="nav-link hover-effect">
+                                <i class="fas fa-history"></i> History Purchase
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Customer/LogOut" class="nav-link hover-effect">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
                         </li>
                     }
                 </ul>
@@ -36,7 +50,7 @@
                     {
                         @await Component.InvokeAsync("Cart")
                     }
-                    <a href="@(Context.User.Identity.IsAuthenticated ? "/Customer/Profile" : "/Customer/LogIn")" class="nav-link">
+                    <a href="@(Context.User.Identity.IsAuthenticated ? "/Customer/Profile" : "/Customer/LogIn")" class="nav-link hover-effect">
                         <i class="fas fa-user fa-2x text-light"></i>
                     </a>
                 </div>
@@ -44,3 +58,43 @@
         </div>
     </nav>
 </div>
+
+<!-- Additional CSS for Hover Effects and Logo Animation -->
+<style>
+    .hover-effect {
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+        .hover-effect::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: green;
+            transition: width 0.3s ease;
+        }
+
+        .hover-effect:hover::after {
+            width: 100%;
+            left: 0;
+            background-color: green;
+        }
+
+        .hover-effect:hover {
+            color: green !important;
+        }
+
+    .logo-image {
+        width: 90px;
+        height: 90px;
+        transition: transform 0.3s ease;
+    }
+
+        .logo-image:hover {
+            transform: scale(1.1);
+        }
+</style>

@@ -81,9 +81,6 @@ public partial class ShopMvcContext : DbContext
             entity.Property(e => e.CustomerId)
                 .HasMaxLength(20)
                 .HasColumnName("CustomerID");
-            entity.Property(e => e.EmployeeId)
-                .HasMaxLength(50)
-                .HasColumnName("EmployeeID");
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.Notes).HasMaxLength(50);
             entity.Property(e => e.OrderDate)
@@ -92,16 +89,11 @@ public partial class ShopMvcContext : DbContext
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(50)
                 .HasDefaultValue("Cash");
-            entity.Property(e => e.RequiredDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
             entity.Property(e => e.ShippedDate)
                 .HasDefaultValueSql("(((1)/(1))/(1900))")
                 .HasColumnType("datetime");
             entity.Property(e => e.ShippingMethod)
-                .HasMaxLength(50)
-                .HasDefaultValue("Airline");
-            entity.Property(e => e.StatusId).HasColumnName("StatusID");
+                .HasMaxLength(50);
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)

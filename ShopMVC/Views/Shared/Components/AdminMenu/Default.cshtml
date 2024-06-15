@@ -1,38 +1,83 @@
 ﻿@model ShopMVC.ViewModels.AdminMenuViewModel
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg" style="background-color: black">
     <div class="container">
-        <a href="/" class="navbar-brand"><h1 class="text-secondary mb-0 font-monospace text-center">Administrator Mode</h1></a>
+        <a href="/" class="navbar-brand d-flex align-items-center">
+            <img src="~/Image/Logo/MVCLogo.jpg" alt="Logo" style="width: 90px; height: 90px;" class="logo-image me-2">
+            <h2 class="text-secondary mb-0 font-monospace">Administrator Mode</h2>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="adminNavbarCollapse">
-            <ul class="navbar-nav ms-auto"> 
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Product" asp-action="Index">
+                    <a class="nav-link hover-effect" asp-controller="Product" asp-action="Index">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Management" asp-action="ProductIndex">
-                        <i class="fas fa-box-open"></i> Products Management
+                    <a class="nav-link hover-effect" asp-controller="Management" asp-action="ProductIndex">
+                        <i class="fas fa-boxes"></i> Products Management
                     </a>
                 </li>
-@*                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Order" asp-action="Index">
-                        <i class="fas fa-shopping-cart"></i> Orders
-                    </a>
-                </li> *@
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="User" asp-action="Index">
+                    <a class="nav-link hover-effect" asp-controller="User" asp-action="Index">
                         <i class="fas fa-users"></i> Users Management
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/Customer/LogOut" class="nav-link">Logout</a>
+                    <a class="nav-link hover-effect" asp-controller="ProfitRanking" asp-action="RankingProfit">
+                        <i class="fas fa-chart-line"></i> Profit Ranking
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/Customer/LogOut" class="nav-link hover-effect">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<!-- Additional CSS for Hover Effects and Logo Animation -->
+<style>
+    .hover-effect {
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+        .hover-effect::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            display: block;
+            margin-top: 5px;
+            right: 0;
+            background: green;
+            transition: width 0.3s ease;
+        }
+
+        .hover-effect:hover::after {
+            width: 100%;
+            left: 0;
+            background-color: green;
+        }
+
+        .hover-effect:hover {
+            color: green !important;
+        }
+
+    .logo-image {
+        width: 40px;
+        height: 40px;
+        transition: transform 0.3s ease;
+    }
+
+        .logo-image:hover {
+            transform: scale(1.1);
+        }
+</style>

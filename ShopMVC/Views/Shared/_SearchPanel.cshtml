@@ -1,6 +1,8 @@
-﻿<form asp-action="Search" asp-controller="Product" class="mb-4">
+﻿<form asp-action="Index" asp-controller="Product" method="get" class="mb-4">
+    <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
+    <input type="hidden" name="price" value="@ViewBag.SelectedPrice" />
     <div class="input-group">
-        <input type="search" class="form-control p-3" placeholder="Searching..." aria-describedby="search-icon-1" name="query">
+        <input type="search" class="form-control p-3" placeholder="Search..." aria-label="Search" name="query" value="@ViewBag.SearchQuery">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-search"></i>
         </button>

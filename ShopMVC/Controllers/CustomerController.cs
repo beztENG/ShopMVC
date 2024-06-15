@@ -224,5 +224,71 @@ namespace ShopMVC.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect("/");
         }
-    }
+
+        [Authorize]
+        public async Task<IActionResult> HistoryPurchase()
+        {
+            var customerId = User.FindFirstValue("CustomerId");
+
+            // Fetch orders for the logged-in customer along with their details
+            var orders = await db.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .Where(o => o.CustomerId == customerId)
+                .OrderByDescending(o => o.OrderDate) // Sort by order date (newest first)
+                .ToListAsync();
+
+            return View(orders);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Reorder(int orderId)
+        {
+            var customerId = User.FindFirstValue("CustomerId");
+            var order = await db.Orders.Include(o => o.OrderDetails).SingleOrDefaultAsync(o => o.OrderId == orderId && o.CustomerId == customerId && !o.Active);
+
+            if (order == null)
+            {
+                TempData["ErrorMessage"] = "Order not found or it is already active.";
+                return RedirectToAction("HistoryPurchase");
+            }
+
+            order.OrderDate = DateTime.Now;
+            order.ShippedDate = DateTime.Now.AddDays(7);
+            order.Active = true;
+            await db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Order reordered successfully.";
+            return RedirectToAction("HistoryPurchase");
+        }
+
+
+        [Authorize]
+		public async Task<IActionResult> CancelOrder(int orderId)
+		{
+			var customerId = User.FindFirstValue("CustomerId");
+			var order = await db.Orders.SingleOrDefaultAsync(o => o.OrderId == orderId && o.CustomerId == customerId);
+
+			if (order == null)
+			{
+				TempData["ErrorMessage"] = "Order not found.";
+				return RedirectToAction("HistoryPurchase");
+			}
+
+			if (order.ShippedDate.HasValue && (order.ShippedDate.Value - DateTime.Now).TotalDays > 4)
+			{
+				order.Active = false;
+				await db.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Order canceled successfully.";
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "Order cannot be canceled. It is either too close to the shipping date or already shipped.";
+			}
+
+			return RedirectToAction("HistoryPurchase");
+		}
+
+
+	}
 }

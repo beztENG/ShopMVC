@@ -53,7 +53,6 @@ namespace ShopMVC.Controllers
                 return RedirectToAction(nameof(ProductIndex));
             }
 
-            // Log errors for debugging
             var errors = ModelState.Values.SelectMany(v => v.Errors);
             foreach (var error in errors)
             {
@@ -145,14 +144,14 @@ namespace ShopMVC.Controllers
                 return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(product.Image))
-            {
-                MyUtil.DeleteImage(product.Image, "Product");
-            }
+            // Toggle the Active status
+            product.Active = !product.Active;
 
-            _db.Products.Remove(product);
+            _db.Products.Update(product);
             await _db.SaveChangesAsync();
+
             return RedirectToAction(nameof(ProductIndex));
         }
+
     }
 }

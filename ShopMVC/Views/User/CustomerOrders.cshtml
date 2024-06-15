@@ -1,0 +1,83 @@
+﻿@model IEnumerable<ShopMVC.Data2.Order>
+
+@{
+    ViewData["Title"] = "Customer Order History";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title text-center">Order History</h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        @foreach (var order in Model)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th class="text-end">Price</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-end">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in order.OrderDetails)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <img src="~/Image/Product/@item.Product.Image" alt="Product Image" class="img-thumbnail me-2" style="max-width: 50px;" />
+                                                        @item.Product.ProductName
+                                                    </td>
+                                                    <td class="text-end">$@item.UnitPrice.ToString("0.00")</td>
+                                                    <td class="text-center">@item.Quantity</td>
+                                                    <td class="text-end">$@((item.UnitPrice * item.Quantity).ToString("0.00"))</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" class="fw-bold text-end">Total:</td>
+                                                <td class="text-end">@((order.OrderDetails.Sum(item => item.UnitPrice * item.Quantity) + order.ShippingFee).ToString("0.00"))</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="fw-bold text-end">Status:</td>
+                                                <td class="text-end">
+                                                    @if (order.Active)
+                                                    {
+                                                        @if (!order.ShippedDate.HasValue || order.ShippedDate.Value.Date > DateTime.Now.Date)
+                                                        {
+                                                            <span class="badge bg-warning text-dark">Ordered</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-success">Delivered</span>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Canceled</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="lead text-center">You have no past orders.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

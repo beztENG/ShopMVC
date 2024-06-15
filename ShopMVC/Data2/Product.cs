@@ -30,9 +30,13 @@ public partial class Product
     public int Views { get; set; }
 
     public string? Description { get; set; }
+    public double? Profit { get; set; }
+    public int? QuantitySold { get; set; }
 
     [Required]
     public string SupplierId { get; set; } = null!;
+    public bool Active { get; set; }
+
 
     public virtual Category Category { get; set; } = null!;
 

@@ -17,71 +17,55 @@ namespace ShopMVC.Controllers
             _db = context;
         }
 
-        public async Task<IActionResult> Index(int? categoryId, int? price, int pageIndex = 1, int pageSize = 6)
+
+        public async Task<IActionResult> Index(int? categoryId, int? price, string? query, int pageIndex = 1, int pageSize = 6)
         {
-            var products = _db.Products.AsQueryable();
+            var products = _db.Products.Include(p => p.Category).Where(p => p.Active); // Include Category here
 
             if (categoryId.HasValue)
             {
                 products = products.Where(p => p.CategoryId == categoryId.Value);
             }
 
-            ViewBag.MinPrice = 1; // Setting minimum price to 1
-            ViewBag.MaxPrice = await products.MaxAsync(p => p.UnitPrice) ?? 1000; // Setting maximum price to the maximum price of the products in the filtered list
-            ViewBag.SelectedPrice = price ?? (int)ViewBag.MaxPrice; // Default to max price if no price filter is set
-            ViewBag.CategoryId = categoryId;
-
             if (price.HasValue)
             {
                 products = products.Where(p => p.UnitPrice <= price.Value);
             }
 
-            var result = products.Select(p => new ProductViewModel
-            {
-                ProductID = p.ProductId,
-                ProductName = p.ProductName,
-                UnitPrice = (decimal)(p.UnitPrice ?? 0),
-                ImageFileName = p.Image ?? "",
-                ShortDescription = p.UnitDescription ?? "",
-                CategoryName = p.Category.CategoryName
-            });
-
-            var paginatedList = await PaginatedList<ProductViewModel>.CreateAsync(result, pageIndex, pageSize);
-            return View(paginatedList);
-        }
-
-
-
-
-
-        public async Task<IActionResult> Search(string? query, int pageIndex = 1, int pageSize = 6)
-        {
-            var products = _db.Products.AsQueryable();
-
+            // Search Filter
             if (!string.IsNullOrWhiteSpace(query))
             {
                 products = products.Where(p => p.ProductName.Contains(query));
             }
 
-            var result = products.Select(p => new ProductViewModel
+            ViewBag.MinPrice = 1;
+            ViewBag.MaxPrice = await _db.Products.Where(p => p.Active).MaxAsync(p => p.UnitPrice) ?? 1000;
+            ViewBag.SelectedPrice = price ?? (int)ViewBag.MaxPrice;
+            ViewBag.CategoryId = categoryId;
+
+            var result = products.Select(p => new ProductViewModel // Map to ProductViewModel
             {
                 ProductID = p.ProductId,
                 ProductName = p.ProductName,
                 UnitPrice = (decimal)(p.UnitPrice ?? 0),
                 ImageFileName = p.Image ?? "",
                 ShortDescription = p.UnitDescription ?? "",
-                CategoryName = p.Category.CategoryName
+                CategoryName = p.Category.CategoryName // Make sure Category is included
             });
 
             var paginatedList = await PaginatedList<ProductViewModel>.CreateAsync(result, pageIndex, pageSize);
-            return View(paginatedList);
+            ViewBag.SearchQuery = query; // Store the search query in ViewBag to pass to _Pagination
+
+            return View(paginatedList); // Return the same Index view
         }
+
+
 
         public IActionResult Detail(int id)
         {
             var product = _db.Products
                 .Include(p => p.Category)
-                .SingleOrDefault(p => p.ProductId == id);
+                .SingleOrDefault(p => p.ProductId == id && p.Active);
 
             if (product == null)
             {

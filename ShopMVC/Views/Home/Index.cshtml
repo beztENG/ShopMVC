@@ -29,10 +29,9 @@
 @if (Context.User.Identity.IsAuthenticated && Context.User.IsInRole("1"))
 {
     <div class="container mt-5">
+        <h3 class="display-3 text-center font-monospace mb-5">Welcome, @User.Identity.Name!</h3>
         <div class="row">
-
-            <h3 class="display-3 text-center font-monospace mb-5">Welcome, @User.Identity.Name!</h3>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <a asp-controller="Product" asp-action="Index" class="text-decoration-none">
                     <div class="card shadow-sm jump-card">
                         <div class="card-body text-center">
@@ -45,7 +44,7 @@
                 </a>
             </div>
 
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <a asp-controller="Management" asp-action="ProductIndex" class="text-decoration-none">
                     <div class="card shadow-sm jump-card">
                         <div class="card-body text-center">
@@ -58,7 +57,7 @@
                 </a>
             </div>
 
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <a asp-controller="User" asp-action="Index" class="text-decoration-none">
                     <div class="card shadow-sm jump-card">
                         <div class="card-body text-center">
@@ -71,9 +70,22 @@
                 </a>
             </div>
 
+            <div class="col-md-3 mb-4">
+                <a asp-controller="ProfitRanking" asp-action="RankingProfit" class="text-decoration-none">
+                    <div class="card shadow-sm jump-card">
+                        <div class="card-body text-center">
+                            <div class="logo-container">
+                                <i class="fas fa-chart-line fa-3x"></i>
+                            </div>
+                            <h5 class="card-title section-name">Profit Ranking</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 }
+
 
 <style>
     .jump-card {

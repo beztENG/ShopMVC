@@ -2,7 +2,7 @@
     <form id="priceFilterForm" asp-action="Index" method="get">
         <label for="price">Price:</label>
         <input type="range" id="price" name="price" min="1" max="1000" value="@ViewBag.SelectedPrice" oninput="updatePriceDisplay(this.value)" />
-        <span id="priceDisplay">@ViewBag.SelectedPrice</span>
+        <span id="priceDisplay">$@ViewBag.SelectedPrice</span>
         <input type="hidden" name="categoryId" value="@ViewBag.CategoryId" />
         <button type="submit" style="display: none;">Submit</button>
     </form>

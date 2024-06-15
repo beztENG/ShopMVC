@@ -6,7 +6,7 @@ namespace ShopMVC.ViewModels
     {
         [Display(Name = "Email ")]
         [Required(ErrorMessage = "Please enter username")]
-        [MaxLength(20,ErrorMessage = "Maximun 20 characters")]
+        [MaxLength(50,ErrorMessage = "Maximun 50 characters")]
         public string Email { get; set; }
 
         [Display(Name = "Password")]
