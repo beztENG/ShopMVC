@@ -24,12 +24,10 @@ namespace ShopMVC.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                // If logged in, use CustomerId
                 cartKey = MySetting.CartKeyPrefix + User.FindFirstValue("CustomerId");
             }
             else
             {
-                // If not logged in, try to get an existing anonymous cart key from session, or create a new one
                 cartKey = HttpContext.Session.GetString("AnonymousCartKey");
                 if (string.IsNullOrEmpty(cartKey))
                 {
@@ -38,15 +36,16 @@ namespace ShopMVC.Controllers
                 }
             }
 
-            return HttpContext.Session.Get<List<CartItem>>(cartKey) ?? new List<CartItem>();
+            return Request.Cookies.Get<List<CartItem>>(cartKey) ?? new List<CartItem>();
         }
 
         private void SaveCart(List<CartItem> cart)
         {
-            string? cartKey = User.Identity.IsAuthenticated
+            string cartKey = User.Identity.IsAuthenticated
                 ? MySetting.CartKeyPrefix + User.FindFirstValue("CustomerId")
                 : HttpContext.Session.GetString("AnonymousCartKey");
-            HttpContext.Session.Set(cartKey, cart);
+
+            Response.Cookies.Set(cartKey, cart, 1440); // Save for 24 hours
         }
 
         public IActionResult Index()
@@ -57,7 +56,7 @@ namespace ShopMVC.Controllers
         public IActionResult AddToCart(int id, int quantity = 1)
         {
             var cart = GetCart();
-            var item = cart.SingleOrDefault(p => p.ProductID == id); // English property name
+            var item = cart.SingleOrDefault(p => p.ProductID == id);
 
             if (item == null)
             {
@@ -84,7 +83,7 @@ namespace ShopMVC.Controllers
                 item.Quantity += quantity;
             }
 
-            SaveCart(cart); // Use SaveCart() to save the updated cart
+            SaveCart(cart);
 
             return RedirectToAction("Index");
         }
@@ -128,12 +127,10 @@ namespace ShopMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Calculate total price (including shipping)
             decimal subtotal = cart.Sum(item => item.TotalPrice);
             decimal shippingTotal = cart.Sum(item => item.ShippingFee);
             decimal total = subtotal + shippingTotal;
 
-            // Pass totals to the view
             ViewBag.Subtotal = subtotal;
             ViewBag.ShippingTotal = shippingTotal;
             ViewBag.Total = total;
@@ -167,14 +164,14 @@ namespace ShopMVC.Controllers
                 {
                     CustomerId = customerId,
                     OrderDate = DateTime.Now,
-                    ShippedDate = DateTime.Now.AddDays(7), // Calculate shipped date (7 days after today)
-                    FullName = customer.FullName, // Auto-populate from customer
+                    ShippedDate = DateTime.Now.AddDays(7),
+                    FullName = customer.FullName,
                     Address = Address,
                     PaymentMethod = SelectedPaymentMethod,
-                    ShippingMethod = "Standard",  // You can customize shipping methods
+                    ShippingMethod = "Standard",
                     ShippingFee = (double)cart.Sum(item => item.ShippingFee),
                     Notes = Notes,
-                    Active = true // Set order as active
+                    Active = true
                 };
 
                 _db.Orders.Add(order);
@@ -192,12 +189,11 @@ namespace ShopMVC.Controllers
                         ProductId = cartItem.ProductID,
                         UnitPrice = (double)cartItem.UnitPrice,
                         Quantity = cartItem.Quantity,
-                        Discount = product.Discount // Auto-populate from product
+                        Discount = product.Discount
                     };
 
                     _db.OrderDetails.Add(orderDetail);
 
-                    // Update the QuantitySold for the product
                     product.QuantitySold += cartItem.Quantity;
                 }
 
@@ -209,7 +205,6 @@ namespace ShopMVC.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception for debugging
                 ModelState.AddModelError("error", "Error occurred while placing an order.");
 
                 TempData["ErrorMessage"] = "An error occurred while placing your order. Please try again later.";

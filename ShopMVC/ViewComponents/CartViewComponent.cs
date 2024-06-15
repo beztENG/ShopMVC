@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShopMVC.Helpers;
 using ShopMVC.ViewModels;
-using System.Security.Claims; // Add this line
+using System.Security.Claims;
 
 namespace ShopMVC.ViewComponents
 {
@@ -12,7 +12,6 @@ namespace ShopMVC.ViewComponents
             string cartKey;
             if (User.Identity.IsAuthenticated)
             {
-                // Cast User to ClaimsPrincipal
                 var claimsPrincipal = User as ClaimsPrincipal;
                 cartKey = MySetting.CartKeyPrefix + claimsPrincipal?.FindFirstValue("CustomerId");
             }
@@ -21,8 +20,7 @@ namespace ShopMVC.ViewComponents
                 cartKey = HttpContext.Session.GetString("AnonymousCartKey");
             }
 
-            // Handle the case where the cartKey might be null (user is not logged in and no anonymous cart yet)
-            var cart = HttpContext.Session.Get<List<CartItem>>(cartKey) ?? new List<CartItem>();
+            var cart = Request.Cookies.Get<List<CartItem>>(cartKey) ?? new List<CartItem>();
 
             return View("CartPanel", new CartModel
             {

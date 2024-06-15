@@ -21,7 +21,7 @@ namespace ShopMVC.ViewComponents
                 {
                     CategoryID = category.CategoryId,
                     CategoryName = category.CategoryName,
-                    ProductCount = category.Products.Count // Assuming Products is a navigation property
+                    ProductCount = category.Products.Count(p => p.Active) // Assuming Products is a navigation property
                 })
                 .OrderBy(p => p.CategoryName);
 
