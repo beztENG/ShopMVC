@@ -224,8 +224,6 @@ GO
 -- Alter Order table to add default constraints
 ALTER TABLE [dbo].[Order] ADD CONSTRAINT [DF_Order_OrderDate] DEFAULT (GETDATE()) FOR [OrderDate]; -- "OrderDate" replaces "NgayDat"
 GO
-ALTER TABLE [dbo].[Order] ADD CONSTRAINT [DF_Order_RequiredDate] DEFAULT (GETDATE()) FOR [RequiredDate]; -- "RequiredDate" replaces "NgayCan"
-GO
 ALTER TABLE [dbo].[Order] ADD CONSTRAINT [DF_Order_ShippedDate] DEFAULT (((1)/(1))/(1900)) FOR [ShippedDate]; -- "ShippedDate" replaces "NgayGiao"
 GO
 ALTER TABLE [dbo].[Order] ADD CONSTRAINT [DF_Order_PaymentMethod] DEFAULT (N'Cash') FOR [PaymentMethod]; -- "PaymentMethod" replaces "CachThanhToan"
@@ -279,24 +277,40 @@ ALTER TABLE [dbo].[Product] CHECK CONSTRAINT [FK_Product_Category];
 GO
 
 -- Select all data from the Customer table
-SELECT * FROM [dbo].[Customer];
-Select* from [dbo].[User]
+
 
 
 update [dbo].[User]
 set Active = 'true'
 where UserID = 5
 
-Update [dbo].[Customer]
-set FullName = 'Dinh Quoc Vinh'
-where Email = 'admin@admin.com'
+Update [dbo].[Product]
+set Active = 'true'
+where ProductName = 'Tissot'
 
-alter table [dbo].[User]
-add Active bit 
+alter table [dbo].[Product]
+drop column Profit 
 
--- Select all data from the Product table
-SELECT * FROM dbo.Product;
+alter table [dbo].[Product]
+add Profit float
+
+Update [dbo].[Order]
+set Active = 'true'
+
+DELETE FROM [dbo].[Order];
+DELETE FROM [dbo].[OrderDetail];
+
+
+-- Select all data from the table
+
 Select * from dbo.Category;
 Select * from [dbo].[Order]
+Select * from [dbo].[OrderDetail]
+SELECT * FROM dbo.Product;
+SELECT * FROM [dbo].[Customer];
+SELECT * FROM [dbo].[User]
 
+select * from [dbo].[Category]
+
+Select* from [dbo].[User]
 --Drop DATABASE ShopMVC;
