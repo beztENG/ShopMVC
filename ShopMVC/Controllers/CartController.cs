@@ -198,7 +198,16 @@ namespace ShopMVC.Controllers
                 }
 
                 await _db.SaveChangesAsync();
-                HttpContext.Session.Remove(MySetting.CartKeyPrefix);
+
+                // Remove the cart from cookies
+                string cartKey = User.Identity.IsAuthenticated
+                    ? MySetting.CartKeyPrefix + User.FindFirstValue("CustomerId")
+                    : HttpContext.Session.GetString("AnonymousCartKey");
+
+                if (!string.IsNullOrEmpty(cartKey))
+                {
+                    Response.Cookies.Delete(cartKey);
+                }
 
                 TempData["SuccessMessage"] = "Order placed successfully!";
                 return RedirectToAction("OrderConfirmation", new { orderId = order.OrderId });
@@ -211,6 +220,7 @@ namespace ShopMVC.Controllers
                 return RedirectToAction("Checkout");
             }
         }
+
 
         public IActionResult OrderConfirmation(int orderId)
         {
